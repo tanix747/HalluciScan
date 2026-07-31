@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+.vite/
+npm-debug.log*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Databases and local artifacts
+*.sqlite
+*.sqlite3
+*.db
+data/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Docker
+docker-compose.override.yml
