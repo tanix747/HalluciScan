@@ -51,6 +51,8 @@ type Summary = {
 const sampleText =
   "Linux was invented by Bill Gates in 1998. Python was created by Guido van Rossum and first appeared in 1991.";
 
+const EVIDENCE_SNIPPET_MAX_CHARS = 280;
+
 const statusConfig = {
   SUPPORTED: {
     label: "Supported",
@@ -417,16 +419,23 @@ function EvidenceList({ evidence }: { evidence: Evidence[] }) {
             <p className="text-sm text-slate-400">No evidence was available for this claim.</p>
           ) : (
             evidence.map((item) => (
-              <div key={`${item.url}-${item.title}`} className="rounded-lg border border-line bg-panel/70 p-4">
-                <h4 className="text-sm font-semibold leading-6 text-slate-100">{item.title}</h4>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{item.content}</p>
+              <div key={`${item.url}-${item.title}`} className="space-y-3 rounded-lg border border-line bg-panel/70 p-4">
+                <div className="min-w-0">
+                  <h4 className="break-words text-sm font-semibold leading-6 text-slate-100">
+                    {item.title || getPublisherName(item.url)}
+                  </h4>
+                  <p className="mt-1 text-xs font-medium uppercase tracking-[0.12em] text-slate-500">
+                    {getPublisherName(item.url)}
+                  </p>
+                </div>
+                <p className="text-sm leading-6 text-slate-400">{truncateEvidenceSnippet(item.content)}</p>
                 <a
                   href={item.url}
                   target="_blank"
-                  rel="noreferrer"
-                  className="mt-3 inline-flex max-w-full items-center gap-2 text-sm text-signal hover:text-[#47e8c4]"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-fit items-center gap-2 text-sm font-medium text-signal transition hover:text-[#47e8c4]"
                 >
-                  <span className="truncate">{item.url}</span>
+                  <span>Read Source</span>
                   <ExternalLink className="size-4 shrink-0" aria-hidden="true" />
                 </a>
               </div>
@@ -436,6 +445,52 @@ function EvidenceList({ evidence }: { evidence: Evidence[] }) {
       )}
     </section>
   );
+}
+
+function truncateEvidenceSnippet(content: string): string {
+  const normalized = content.replace(/\s+/g, " ").trim();
+
+  if (normalized.length <= EVIDENCE_SNIPPET_MAX_CHARS) {
+    return normalized;
+  }
+
+  const truncated = normalized.slice(0, EVIDENCE_SNIPPET_MAX_CHARS).trimEnd();
+  return `${truncated.replace(/[.,;:\s]+$/, "")}...`;
+}
+
+function getPublisherName(url: string): string {
+  try {
+    const hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
+
+    if (hostname.includes("wikipedia.org")) {
+      return "Wikipedia";
+    }
+
+    if (hostname.includes("britannica.com")) {
+      return "Britannica";
+    }
+
+    if (hostname.includes("theverge.com")) {
+      return "The Verge";
+    }
+
+    if (hostname === "bbc.co.uk" || hostname.endsWith(".bbc.co.uk") || hostname.includes("bbc.com")) {
+      return "BBC";
+    }
+
+    if (hostname.includes("microsoft.com")) {
+      return "Microsoft Docs";
+    }
+
+    const domainPart = hostname.split(".").at(-2) ?? hostname;
+    return domainPart
+      .split("-")
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  } catch {
+    return "Source";
+  }
 }
 
 function parseAnalyzeResponse(payload: unknown): AnalyzeResponse {
