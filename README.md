@@ -92,6 +92,7 @@ GEMINI_API_KEY=
 TAVILY_API_KEY=
 GEMINI_MODEL=gemini-3.6-flash
 ```
+<img width="1910" height="943" alt="image" src="https://github.com/user-attachments/assets/61f49658-85dc-48ee-8f06-afc5f028ec28" />
 
 ---
 
