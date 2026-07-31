@@ -109,7 +109,8 @@ GEMINI_MODEL=gemini-3.6-flash
 <h3>✅ Results Dashboard</h3>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/85b67b8d-860a-4542-b5d8-e1b6f9ef3edf" width="48%">
+ <img width="1903" height="950" alt="image" src="https://github.com/user-attachments/assets/2bc5b329-7e40-40af-9b55-e1b125799672" />
+
   <img src="https://github.com/user-attachments/assets/61f49658-85dc-48ee-8f06-afc5f028ec28" width="48%">
 </p>
 ---
