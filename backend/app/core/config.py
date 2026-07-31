@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = Field(default="VeritasAI API", alias="APP_NAME")
+    app_name: str = Field(default="HalluciScanAI API", alias="APP_NAME")
     app_version: str = Field(default="0.1.0", alias="APP_VERSION")
     environment: str = Field(default="development", alias="ENVIRONMENT")
     cors_origins: list[str] = Field(

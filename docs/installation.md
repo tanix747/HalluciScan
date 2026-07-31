@@ -22,7 +22,7 @@ Open:
 
 ## Manual Checks
 
-1. Confirm the frontend loads with the VeritasAI page.
+1. Confirm the frontend loads with the HalluciScanAI page.
 2. Confirm the API status badge shows `API online`.
 3. Visit `http://localhost:8000/api/health` and confirm the JSON response contains `"status": "ok"`.
 4. Send a `POST /api/analyze` request with factual text and confirm claims include status, confidence, reason, and evidence.

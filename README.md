@@ -1,6 +1,6 @@
 # HalluciScan 🛡️
 
-> **Evidence-backed AI Hallucination Detection using RAG and Semantic Reranking**
+> **AI Hallucination Detection & Explainable Fact Verification**
 
 HalluciScan detects factual hallucinations in AI-generated or human-written text by extracting claims, retrieving live evidence from the web, reranking relevant sources, and generating explainable verdicts with confidence scores.
 

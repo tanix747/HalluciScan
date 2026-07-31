@@ -13,7 +13,10 @@ def anyio_backend() -> str:
 
 class FakeClaimExtractor:
     async def extract(self, _text: str) -> list[Claim]:
-        return [Claim(text="Python was created by Guido van Rossum")]
+        return [
+            Claim(text="Python was created by Guido van Rossum"),
+            Claim(text="Python first appeared in 1991"),
+        ]
 
 
 class FakeRetriever:
@@ -37,33 +40,41 @@ class FakeReranker:
 
 
 class FakeVerifier:
-    async def verify(self, _claim_text: str, evidence: list[Evidence]) -> VerificationResult:
-        if not evidence:
-            return VerificationResult(
+    def __init__(self) -> None:
+        self.call_count = 0
+
+    async def verify_batch(self, claims_with_evidence: list[tuple[str, list[Evidence]]]) -> list[VerificationResult]:
+        self.call_count += 1
+        return [
+            VerificationResult(
                 status="INSUFFICIENT_EVIDENCE",
                 confidence=0.0,
                 reason="No evidence was retrieved for this claim.",
             )
-
-        return VerificationResult(
-            status="SUPPORTED",
-            confidence=0.94,
-            reason="Multiple sources confirm the claim.",
-        )
+            if not evidence
+            else VerificationResult(
+                status="SUPPORTED",
+                confidence=0.94,
+                reason="Multiple sources confirm the claim.",
+            )
+            for _claim_text, evidence in claims_with_evidence
+        ]
 
 
 @pytest.mark.anyio
 async def test_complete_pipeline_returns_verified_claim_with_top_evidence() -> None:
+    verifier = FakeVerifier()
     service = AnalyzeService(
         claim_extractor=FakeClaimExtractor(),
         retriever=FakeRetriever(),
         reranker=FakeReranker(),
-        verifier=FakeVerifier(),
+        verifier=verifier,
     )
 
     response = await service.analyze(AnalyzeRequest(text="Python was created by Guido van Rossum."))
 
-    assert len(response.claims) == 1
+    assert len(response.claims) == 2
+    assert verifier.call_count == 1
     claim = response.claims[0]
     assert claim.text == "Python was created by Guido van Rossum"
     assert claim.status == "SUPPORTED"
@@ -74,14 +85,16 @@ async def test_complete_pipeline_returns_verified_claim_with_top_evidence() -> N
 
 @pytest.mark.anyio
 async def test_pipeline_continues_when_retrieval_fails() -> None:
+    verifier = FakeVerifier()
     service = AnalyzeService(
         claim_extractor=FakeClaimExtractor(),
         retriever=FakeFailingRetriever(),
         reranker=FakeReranker(),
-        verifier=FakeVerifier(),
+        verifier=verifier,
     )
 
     response = await service.analyze(AnalyzeRequest(text="Python was created by Guido van Rossum."))
 
+    assert verifier.call_count == 1
     assert response.claims[0].status == "INSUFFICIENT_EVIDENCE"
     assert response.claims[0].evidence == []

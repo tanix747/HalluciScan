@@ -1,6 +1,6 @@
 # Architecture
 
-VeritasAI is organized as a modular full-stack system.
+HalluciScanAI is organized as a modular full-stack system.
 
 ```mermaid
 flowchart LR

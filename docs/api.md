@@ -9,7 +9,7 @@ Response:
 ```json
 {
   "status": "ok",
-  "service": "VeritasAI API",
+  "service": "HalluciScanAI API",
   "version": "0.1.0"
 }
 ```

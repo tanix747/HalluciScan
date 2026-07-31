@@ -119,15 +119,25 @@ class AnalyzeService:
             logger.error("Pipeline dependency is not configured", extra={"request_id": request_id})
             raise AnalyzeDependencyConfigError(str(exc)) from exc
 
-        claims = [
-            await self._complete_claim(
+        claims_with_evidence = [
+            await self._prepare_claim_evidence(
                 claim=claim,
                 retriever=retriever,
                 reranker=reranker,
-                verifier=verifier,
                 request_id=request_id,
             )
             for claim in extracted_claims
+        ]
+        verdicts = await self._verify_claims(claims_with_evidence, verifier, request_id)
+        claims = [
+            Claim(
+                text=claim.text,
+                status=verdict.status,
+                confidence=verdict.confidence,
+                reason=verdict.reason,
+                evidence=ranked_evidence,
+            )
+            for (claim, ranked_evidence), verdict in zip(claims_with_evidence, verdicts, strict=False)
         ]
 
         processing_time_ms = int((time.perf_counter() - started_at) * 1000)
@@ -148,25 +158,16 @@ class AnalyzeService:
             claims=claims,
         )
 
-    async def _complete_claim(
+    async def _prepare_claim_evidence(
         self,
         claim: Claim,
         retriever: Retriever,
         reranker: Reranker,
-        verifier: Verifier,
         request_id: str,
-    ) -> Claim:
+    ) -> tuple[Claim, list[Evidence]]:
         evidence = await self._retrieve_evidence(claim.text, retriever, request_id)
         ranked_evidence = await self._rerank_evidence(claim.text, evidence, reranker, request_id)
-        verdict = await self._verify_claim(claim.text, ranked_evidence, verifier, request_id)
-
-        return Claim(
-            text=claim.text,
-            status=verdict.status,
-            confidence=verdict.confidence,
-            reason=verdict.reason,
-            evidence=ranked_evidence,
-        )
+        return claim, ranked_evidence
 
     async def _retrieve_evidence(
         self,
@@ -202,15 +203,16 @@ class AnalyzeService:
             )
             return evidence[:3]
 
-    async def _verify_claim(
+    async def _verify_claims(
         self,
-        claim_text: str,
-        evidence: list[Evidence],
+        claims_with_evidence: list[tuple[Claim, list[Evidence]]],
         verifier: Verifier,
         request_id: str,
-    ) -> VerificationResult:
+    ) -> list[VerificationResult]:
         try:
-            return await verifier.verify(claim_text, evidence)
+            return await verifier.verify_batch(
+                [(claim.text, ranked_evidence) for claim, ranked_evidence in claims_with_evidence]
+            )
         except (
             VerificationParseError,
             VerificationRateLimitError,
@@ -218,11 +220,14 @@ class AnalyzeService:
             VerificationError,
         ) as exc:
             logger.warning(
-                "Claim verification failed; marking insufficient evidence",
-                extra={"request_id": request_id, "claim": claim_text, "error": str(exc)},
+                "Batch claim verification failed; marking claims insufficient evidence",
+                extra={"request_id": request_id, "claim_count": len(claims_with_evidence), "error": str(exc)},
             )
-            return VerificationResult(
-                status="INSUFFICIENT_EVIDENCE",
-                confidence=0.0,
-                reason="Verification could not be completed for this claim.",
-            )
+            return [
+                VerificationResult(
+                    status="INSUFFICIENT_EVIDENCE",
+                    confidence=0.0,
+                    reason="Verification could not be completed for this claim.",
+                )
+                for _claim, _evidence in claims_with_evidence
+            ]
