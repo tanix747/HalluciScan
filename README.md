@@ -92,14 +92,25 @@ GEMINI_API_KEY=
 TAVILY_API_KEY=
 GEMINI_MODEL=gemini-3.6-flash
 ```
-## Screenshots
-###  Landing Page
-<img width="1919" height="933" alt="Screenshot 2026-07-31 145031" src="https://github.com/user-attachments/assets/85b67b8d-860a-4542-b5d8-e1b6f9ef3edf" />
-###  Analysis in Progress
-<img width="1919" height="925" alt="Screenshot 2026-07-31 144946" src="https://github.com/user-attachments/assets/6bf04722-b207-45a9-a051-37a3a7ade98b" />
-### Results Dashboard
-<img width="1919" height="939" alt="Screenshot 2026-07-31 144927" src="https://github.com/user-attachments/assets/3108e9e8-33df-4719-a2de-64b9d208e9bb" />
-<img width="1910" height="943" alt="image" src="https://github.com/user-attachments/assets/61f49658-85dc-48ee-8f06-afc5f028ec28" />
+## 📸 Screenshots
 
+<h3>🏠 Landing Page</h3>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3108e9e8-33df-4719-a2de-64b9d208e9bb" width="900">
+</p>
+
+<h3>⚡ Analysis in Progress</h3>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6bf04722-b207-45a9-a051-37a3a7ade98b" width="900">
+</p>
+
+<h3>✅ Results Dashboard</h3>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/85b67b8d-860a-4542-b5d8-e1b6f9ef3edf" width="48%">
+  <img src="https://github.com/user-attachments/assets/61f49658-85dc-48ee-8f06-afc5f028ec28" width="48%">
+</p>
 ---
 
