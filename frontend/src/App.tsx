@@ -16,7 +16,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
-const API_BASE = "https://halluciscan-backend.onrender.com";
+//const API_BASE = "https://halluciscan-backend.onrender.com";
 type HealthState = "checking" | "online" | "offline";
 type AnalysisState = "idle" | "loading" | "success" | "error";
 type ClaimStatus = "SUPPORTED" | "CONTRADICTED" | "INSUFFICIENT_EVIDENCE";
@@ -90,8 +90,9 @@ function App() {
 
     async function checkHealth() {
       try {
-        const response = await fetch(`${API_BASE}/api/health`, {
-          signal: controller.signal,});
+        const response = await fetch("/api/health", {
+        signal: controller.signal,
+      });
         setHealth(response.ok ? "online" : "offline");
       } catch {
         setHealth("offline");
@@ -147,7 +148,7 @@ function App() {
     setProgress(8);
 
     try {
-      const response = await fetch(`${API_BASE}/api/analyze`, {
+      const response = await fetch("/api/analyze", {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
