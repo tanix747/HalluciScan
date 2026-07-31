@@ -187,7 +187,7 @@ function App() {
               <ShieldCheck className="size-5 text-signal" aria-hidden="true" />
             </div>
             <div>
-              <p className="text-lg font-semibold tracking-normal">VeritasAI</p>
+              <p className="text-lg font-semibold tracking-normal">HalluciScan</p>
               <p className="text-sm text-slate-400">Explainable hallucination detection</p>
             </div>
           </div>
