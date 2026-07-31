@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     app_version: str = Field(default="0.1.0", alias="APP_VERSION")
     environment: str = Field(default="development", alias="ENVIRONMENT")
     cors_origins: list[str] = Field(
-        default=["http://localhost:5173", "http://127.0.0.1:5173"],
+        default=["http://localhost:5173", "http://127.0.0.1:5173" "https://halluci-scan.vercel.app"],
         alias="CORS_ORIGINS",
     )
     gemini_api_key: str | None = Field(default=None, alias="GEMINI_API_KEY")
